@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 
 const App = () => {
-  // state
+  const [searchQuery, setSearchQuery] = useState("react");
   const [news, setNews] = useState([]);
 
   // fetch news
   const fetchNews = () => {
-    return fetch("http://hn.algolia.com/api/v1/search?query=react")
+    fetch(`http://hn.algolia.com/api/v1/search?query=${searchQuery}`)
       .then((result) => result.json())
       .then((data) => setNews(data.hits))
       .catch((error) => console.log(error));
@@ -14,11 +14,19 @@ const App = () => {
 
   useEffect(() => {
     fetchNews();
-  }, []); // Empty dependency array to run the effect only once on mount
+  }, [searchQuery]); // Run the effect whenever searchQuery changes
+
+  const handleChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
 
   return (
     <div>
       <h2>News</h2>
+      <form>
+        <input type="text" value={searchQuery} onChange={handleChange} />
+        <button>Search</button>
+      </form>
       {news.map((n, i) => (
         <p key={i}>{n.title}</p>
       ))}
@@ -27,8 +35,6 @@ const App = () => {
 };
 
 export default App;
-
-
 
 
 
